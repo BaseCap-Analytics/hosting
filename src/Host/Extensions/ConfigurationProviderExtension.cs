@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace BaseCap.Hosting.GlobalConfiguration.Extensions
+namespace BaseCap.Hosting.Extensions
 {
     /// <summary>
     /// Provides access to the Configuration Root

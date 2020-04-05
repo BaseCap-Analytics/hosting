@@ -1,4 +1,4 @@
-using BaseCap.Hosting.GlobalConfiguration.Extensions;
+using BaseCap.Hosting.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
