@@ -10,8 +10,9 @@
         <NullableContextOptions>enable</NullableContextOptions>
         <Deterministic>true</Deterministic>
         <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)LibraryFxCopRules.ruleset</CodeAnalysisRuleSet>
-        <Version Condition="'$(Configuration)'!='Release'">99.99.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</Version>
-        <Version Condition="'$(Configuration)'=='Release'">1.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</Version>
+        <VersionSuffix Condition="'$(VersionSuffix)'==''">1</VersionSuffix>
+        <Version Condition="'$(Configuration)'!='Release'">99.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd)).$(VersionSuffix)</Version>
+        <Version Condition="'$(Configuration)'=='Release'">1.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd)).$(VersionSuffix)</Version>
         <RootNamespace>BaseCap</RootNamespace>
         <Product>Hosting Platform</Product>
         <Authors>BaseCap Analytics Inc</Authors>
