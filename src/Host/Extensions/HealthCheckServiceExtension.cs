@@ -39,13 +39,13 @@ namespace BaseCap.Hosting.Extensions
             if (options.AddBasicLivenessProbe)
             {
                 services.AddSingleton<ILivenessQueryResponder, BasicLivenessQueryResponder>();
-                builder.AddCheck<LivenessProbe>("liveness", failureStatus: HealthStatus.Unhealthy, tags: new[] { "live" });
+                builder.AddCheck<LivenessProbe>("liveness", failureStatus: HealthStatus.Unhealthy, tags: new[] { "bca-live" });
             }
 
             if (options.AddBasicReadinessProbe || options.AddCustomReadinessProbe)
             {
                 services.AddSingleton<ReadinessProbe>();
-                builder.AddCheck<ReadinessProbe>("readiness", failureStatus: HealthStatus.Unhealthy, tags: new[] { "ready" });
+                builder.AddCheck<ReadinessProbe>("readiness", failureStatus: HealthStatus.Unhealthy, tags: new[] { "bca-ready" });
             }
 
             if (options.AddBasicReadinessProbe)
@@ -77,7 +77,7 @@ namespace BaseCap.Hosting.Extensions
                             endpoints.MapHealthChecks("/health/live", new HealthCheckOptions()
                             {
                                 AllowCachingResponses = false,
-                                Predicate = (check) => check.Tags.Contains("live"),
+                                Predicate = (check) => check.Tags.Contains("bca-live"),
                             });
                         }
 
@@ -86,7 +86,7 @@ namespace BaseCap.Hosting.Extensions
                             endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions()
                             {
                                 AllowCachingResponses = false,
-                                Predicate = (check) => check.Tags.Contains("ready"),
+                                Predicate = (check) => check.Tags.Contains("bca-ready"),
                             });
                         }
                     });
