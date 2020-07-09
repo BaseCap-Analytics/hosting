@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Prometheus;
 using Serilog;
 using System;
 using System.IO;
@@ -21,7 +20,6 @@ namespace BaseCap.Hosting
     /// </summary>
     public abstract class ServiceHost
     {
-        private readonly Histogram _uptime;
         private readonly IHostBuilder _hostBuilder;
         private readonly string _serviceName;
         private readonly ushort _listenPort;
@@ -43,7 +41,6 @@ namespace BaseCap.Hosting
                 throw new ArgumentOutOfRangeException(nameof(listenPort));
             }
 
-            _uptime = Metrics.CreateHistogram($"bca_service_uptime_{serviceName.Trim().Replace(' ', '_').Replace('-', '_')}", $"Uptime tracker for the {serviceName} Service");
             _serviceName = serviceName;
             _listenPort = listenPort;
             _host = null;
@@ -137,27 +134,24 @@ namespace BaseCap.Hosting
         {
             _host = _hostBuilder.Build();
 
-            using (_uptime.NewTimer())
+            try
             {
-                try
-                {
-                    string versionNumber = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
-                    Log.Logger.Information("Starting Service {Name} with version {Version} at {Time}", _serviceName, versionNumber, DateTimeOffset.UtcNow);
-                    await _host.RunAsync().ConfigureAwait(false);
-                }
-                catch (OperationCanceledException)
-                {
-                    // No-op since this is thrown when Ctrl+C is pressed or the console window is closed
-                }
-                catch (Exception ex)
-                {
-                    // Out platform logger should be initialized to use that one and our initialized one
-                    Log.Logger.Error(ex, "Uncaught error in service {Name}", _serviceName);
-                }
-                finally
-                {
-                    Log.Logger.Information("Stopping Service {Name} at {Time}", _serviceName, DateTimeOffset.UtcNow);
-                }
+                string versionNumber = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+                Log.Logger.Information("Starting Service {Name} with version {Version} at {Time}", _serviceName, versionNumber, DateTimeOffset.UtcNow);
+                await _host.RunAsync().ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // No-op since this is thrown when Ctrl+C is pressed or the console window is closed
+            }
+            catch (Exception ex)
+            {
+                // Out platform logger should be initialized to use that one and our initialized one
+                Log.Logger.Error(ex, "Uncaught error in service {Name}", _serviceName);
+            }
+            finally
+            {
+                Log.Logger.Information("Stopping Service {Name} at {Time}", _serviceName, DateTimeOffset.UtcNow);
             }
         }
     }
